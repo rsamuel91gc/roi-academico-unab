@@ -22,7 +22,7 @@
       background-color: #0f172a;
       font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
-    /* Contenedor Geométrico Anti-Banner (Aísla y suprime el Banner de Apps Script) */
+    /* Contenedor Geométrico Anti-Banner (Aísla y suprime el Banner superior de Apps Script) */
     .portal-viewport-wrapper {
       position: absolute;
       top: 0;
@@ -90,52 +90,6 @@
       text-transform: uppercase;
       margin-bottom: 12px;
     }
-    /* Botón de Emergencia / Rescate Móvil si Google Drive bloquea el Iframe */
-    .portal-rescue-btn {
-      display: none;
-      margin-top: 24px;
-      padding: 10px 18px;
-      background: #f59e0b;
-      color: #0f172a;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      text-decoration: none;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
-      cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-    .portal-rescue-btn:hover {
-      background: #fbbf24;
-      transform: translateY(-1px);
-    }
-    /* Chip flotante discreto de rescate si el frame se traba en móvil */
-    #portal-floating-rescue {
-      position: fixed;
-      bottom: 12px;
-      right: 12px;
-      z-index: 9000;
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #fbbf24;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      opacity: 0.85;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      text-decoration: none;
-    }
-    #portal-floating-rescue:hover {
-      opacity: 1;
-      transform: scale(1.03);
-    }
   </style>
 </head>
 <body>
@@ -151,9 +105,6 @@
     <div style="font-size: 0.82rem; color: #94A3B8; margin-top: 6px; text-align: center; max-width: 320px;">
       Conectando con el Servidor Oficial y Sincronizando Instrumento Psicométrico...
     </div>
-    <a id="portal-btn-rescue-loader" class="portal-rescue-btn" target="_top">
-      🚀 Abrir en Pantalla Completa Directa
-    </a>
   </div>
 
   <!-- Contenedor Maestro Anti-Banner -->
@@ -165,21 +116,13 @@
       allowfullscreen
       loading="eager"
       allow="clipboard-write; encrypted-media; camera; microphone; fullscreen"
-      sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation"
       onload="ocultarLoaderPortal()">
     </iframe>
   </div>
 
-  <!-- Chip de Rescate Institucional para Móvil con Conflicto de Sesiones Google -->
-  <a id="portal-floating-rescue" target="_top" title="Si Google Drive muestra error de cuenta, pulsa aquí para abrir directo">
-    <span>🌐</span> Abrir Directo sin Barras
-  </a>
-
   <script>
-    // URL Base Canónica de Producción de Google Apps Script (Deployment ID Inmutable)
-    var GAS_BASE_URL = "https://script.google.com/macros/s/AKfycbyJSddBDXtRthmwhlAhd35924Pgy-ZSXnoYBxccwybSc4RTumxfhIs4QYMGbbHVKJWPjw/exec";
-
-    var destinoGlobal = "";
+    // URL Base Canónica de Producción de Google Apps Script (Deployment Oficial Inmutable)
+    var GAS_BASE_URL = "https://script.google.com/macros/s/AKfycbw2DStj17C_fnc8UPw3-9y1Rfcp1ILf7tvW9Ht14i4vG1FgP6ce0y1oY_KJgBmjVjuvig/exec";
 
     function inicializarPortal() {
       var iframe = document.getElementById("portal-iframe");
@@ -194,20 +137,8 @@
         currentSearch = currentSearch ? (currentSearch + "&view=formulario") : "?view=formulario";
       }
 
-      // Inyectar authuser=0 para mitigar el bloqueo de Account Chooser en Chrome móvil
-      if (currentSearch.indexOf("authuser=") === -1) {
-        currentSearch += "&authuser=0";
-      }
-
-      destinoGlobal = GAS_BASE_URL + currentSearch + currentHash;
-      iframe.src = destinoGlobal;
-
-      // Configurar enlaces de rescate
-      var btnRescueLoader = document.getElementById("portal-btn-rescue-loader");
-      if (btnRescueLoader) btnRescueLoader.href = destinoGlobal;
-
-      var chipRescue = document.getElementById("portal-floating-rescue");
-      if (chipRescue) chipRescue.href = destinoGlobal;
+      var destinoFinal = GAS_BASE_URL + currentSearch + currentHash;
+      iframe.src = destinoFinal;
     }
 
     function ocultarLoaderPortal() {
@@ -224,14 +155,8 @@
     // Inicializar navegación inmediatamente
     inicializarPortal();
 
-    // Si tarda más de 2.5s en cargar (típico cuando Google Drive bloquea el frame en móvil), revelar botón de rescate
-    setTimeout(function() {
-      var btnRescue = document.getElementById("portal-btn-rescue-loader");
-      if (btnRescue) btnRescue.style.display = "inline-block";
-    }, 2500);
-
-    // Fallback de seguridad: remover loader tras 4.5 segundos si la conexión es lenta
-    setTimeout(ocultarLoaderPortal, 4500);
+    // Fallback de seguridad: remover loader tras 4 segundos si el evento onload tarda
+    setTimeout(ocultarLoaderPortal, 4000);
   </script>
 </body>
 </html>
